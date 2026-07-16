@@ -145,7 +145,7 @@ function BrandHeader() {
     <header className="flex items-center justify-between gap-6">
       <div className="rounded-2xl border border-white/70 bg-white/75 px-4 py-3 shadow-sm backdrop-blur-md">
         <Image
-          src="/logos/yellow-ribbon.png"
+          src="/Logos/yellow-ribbon.png"
           alt="Yellow Ribbon Singapore"
           width={210}
           height={100}
@@ -156,7 +156,7 @@ function BrandHeader() {
 
       <div className="rounded-2xl border border-white/70 bg-white/75 px-4 py-3 shadow-sm backdrop-blur-md">
         <Image
-          src="/logos/np.png"
+          src="/Logos/np.png"
           alt="Ngee Ann Polytechnic"
           width={180}
           height={80}
@@ -240,7 +240,7 @@ function CapturedPhotosPreview({
         <div className="mb-4 flex items-center justify-between gap-3">
           <div className="rounded-xl bg-white px-3 py-2 shadow-sm">
             <Image
-              src="/logos/yellow-ribbon.png"
+              src="/Logos/yellow-ribbon.png"
               alt="Yellow Ribbon Singapore"
               width={70}
               height={28}
@@ -257,7 +257,7 @@ function CapturedPhotosPreview({
 
           <div className="rounded-xl bg-white px-3 py-2 shadow-sm">
             <Image
-              src="/logos/np.png"
+              src="/Logos/np.png"
               alt="Ngee Ann Polytechnic"
               width={64}
               height={28}
@@ -306,7 +306,7 @@ function CapturedPhotosPreview({
           <div className="flex gap-2">
             <div className="rounded-xl bg-white px-3 py-2 shadow-sm">
               <Image
-                src="/logos/yellow-ribbon.png"
+                src="/Logos/yellow-ribbon.png"
                 alt="Yellow Ribbon Singapore"
                 width={72}
                 height={28}
@@ -315,7 +315,7 @@ function CapturedPhotosPreview({
             </div>
             <div className="rounded-xl bg-white px-3 py-2 shadow-sm">
               <Image
-                src="/logos/np.png"
+                src="/Logos/np.png"
                 alt="Ngee Ann Polytechnic"
                 width={68}
                 height={28}
@@ -364,7 +364,7 @@ function CapturedPhotosPreview({
           <div className="flex gap-2">
             <div className="rounded-xl bg-white px-3 py-2 shadow-sm">
               <Image
-                src="/logos/yellow-ribbon.png"
+                src="/Logos/yellow-ribbon.png"
                 alt="Yellow Ribbon Singapore"
                 width={72}
                 height={28}
@@ -373,7 +373,7 @@ function CapturedPhotosPreview({
             </div>
             <div className="rounded-xl bg-white px-3 py-2 shadow-sm">
               <Image
-                src="/logos/np.png"
+                src="/Logos/np.png"
                 alt="Ngee Ann Polytechnic"
                 width={68}
                 height={28}
@@ -421,7 +421,7 @@ function CapturedPhotosPreview({
         <div className="flex gap-2">
           <div className="rounded-xl bg-white px-3 py-2 shadow-sm">
             <Image
-              src="/logos/yellow-ribbon.png"
+              src="/Logos/yellow-ribbon.png"
               alt="Yellow Ribbon Singapore"
               width={72}
               height={28}
@@ -430,7 +430,7 @@ function CapturedPhotosPreview({
           </div>
           <div className="rounded-xl bg-white px-3 py-2 shadow-sm">
             <Image
-              src="/logos/np.png"
+              src="/Logos/np.png"
               alt="Ngee Ann Polytechnic"
               width={68}
               height={28}
@@ -601,6 +601,8 @@ export default function Home() {
   const [countdown, setCountdown] = useState<number | null>(null);
   const [cameraError, setCameraError] = useState("");
   const [cameraAttempt, setCameraAttempt] = useState(0);
+  const [cameraDevices, setCameraDevices] = useState<MediaDeviceInfo[]>([]);
+const [selectedCameraId, setSelectedCameraId] = useState("");
   const [keepsakeMessage, setKeepsakeMessage] = useState(
     "Everyone deserves a second chance.",
   );
@@ -617,57 +619,100 @@ export default function Home() {
     layoutOptions.find((layout) => layout.id === selectedLayout) ??
     layoutOptions[0];
 
-  useEffect(() => {
-    if (screen !== "camera") {
-      return;
-    }
+ useEffect(() => {
+  if (screen !== "camera") {
+    return;
+  }
 
-    let stream: MediaStream | null = null;
-    let cancelled = false;
+  let stream: MediaStream | null = null;
+  let cancelled = false;
 
-    async function startCamera() {
-      setCameraError("");
+  async function startCamera() {
+    setCameraError("");
 
-      try {
-        if (!navigator.mediaDevices?.getUserMedia) {
-          throw new Error("Camera access is not supported in this browser.");
-        }
+    try {
+      if (!navigator.mediaDevices?.getUserMedia) {
+        throw new Error("Camera access is not supported in this browser.");
+      }
 
-        stream = await navigator.mediaDevices.getUserMedia({
-          video: {
-            facingMode: { exact: "environment" },
+      const videoConstraints: MediaTrackConstraints = selectedCameraId
+        ? {
+            deviceId: { exact: selectedCameraId },
             width: { ideal: 1280 },
             height: { ideal: 720 },
-          },
-          audio: false,
-        });
+          }
+        : {
+            facingMode: { ideal: "environment" },
+            width: { ideal: 1280 },
+            height: { ideal: 720 },
+          };
 
-        if (cancelled) {
-          stream.getTracks().forEach((track) => track.stop());
-          return;
-        }
+      stream = await navigator.mediaDevices.getUserMedia({
+        video: videoConstraints,
+        audio: false,
+      });
 
-        if (videoRef.current) {
-          videoRef.current.srcObject = stream;
-          await videoRef.current.play();
-        }
-      } catch (error) {
-        console.error(error);
-        setCameraError(
-          "Camera access was blocked or no camera was found. Please allow camera permission, try again or upload photos instead.",
-        );
+      if (cancelled) {
+        stream.getTracks().forEach((track) => track.stop());
+        return;
       }
-    }
-
-    startCamera();
-
-    return () => {
-      cancelled = true;
-      stream?.getTracks().forEach((track) => track.stop());
 
       if (videoRef.current) {
-        videoRef.current.srcObject = null;
+        videoRef.current.srcObject = stream;
+        await videoRef.current.play();
       }
+
+      const devices = (
+        await navigator.mediaDevices.enumerateDevices()
+      ).filter((device) => device.kind === "videoinput");
+
+      setCameraDevices(devices);
+
+      if (!selectedCameraId) {
+        const activeDeviceId =
+          stream.getVideoTracks()[0]?.getSettings().deviceId ?? "";
+
+        const preferredBackCamera =
+          devices.find((device) =>
+            /back|rear|environment/i.test(device.label),
+          ) ??
+          devices.find((device) => device.deviceId === activeDeviceId);
+
+        if (
+          preferredBackCamera?.deviceId &&
+          preferredBackCamera.deviceId !== activeDeviceId
+        ) {
+          stream.getTracks().forEach((track) => track.stop());
+          setSelectedCameraId(preferredBackCamera.deviceId);
+        } else if (activeDeviceId) {
+          setSelectedCameraId(activeDeviceId);
+        }
+      }
+    } catch (error) {
+      console.error(error);
+
+      if (selectedCameraId) {
+        setSelectedCameraId("");
+        return;
+      }
+
+      setCameraError(
+        "Camera access was blocked or no camera was found. Please allow camera permission, try again or upload photos instead.",
+      );
+    }
+  }
+
+  startCamera();
+
+  return () => {
+    cancelled = true;
+    stream?.getTracks().forEach((track) => track.stop());
+
+    if (videoRef.current) {
+      videoRef.current.srcObject = null;
+    }
+  };
+}, [screen, cameraAttempt, selectedCameraId]);
     };
   }, [screen, cameraAttempt]);
 
@@ -704,6 +749,7 @@ export default function Home() {
       setCameraError("Unable to capture the photo. Please try again.");
       return;
     }
+
     context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
     const photo = canvas.toDataURL("image/jpeg", 0.92);
@@ -779,8 +825,8 @@ export default function Home() {
       );
 
       const [yellowRibbonLogo, npLogo] = await Promise.all([
-        loadCanvasImage("/logos/yellow-ribbon.png"),
-        loadCanvasImage("/logos/np.png"),
+        loadCanvasImage("/Logos/yellow-ribbon.png"),
+        loadCanvasImage("/Logos/np.png"),
       ]);
 
       const safeMessage =
@@ -1302,7 +1348,32 @@ export default function Home() {
 
               <ProgressBar label="Photos" percentage={50} />
             </div>
+{cameraDevices.length > 0 && (
+  <div className="mb-5 flex flex-wrap items-center gap-3 rounded-2xl border border-yellow-200 bg-white/80 p-4 shadow-sm">
+    <label
+      htmlFor="camera-select"
+      className="font-black text-neutral-900"
+    >
+      Choose camera
+    </label>
 
+    <select
+      id="camera-select"
+      value={selectedCameraId}
+      onChange={(event) => {
+        setCapturedPhotos([]);
+        setSelectedCameraId(event.target.value);
+      }}
+      className="min-w-64 flex-1 rounded-xl border border-neutral-300 bg-white px-4 py-3 font-semibold"
+    >
+      {cameraDevices.map((device, index) => (
+        <option key={device.deviceId} value={device.deviceId}>
+          {device.label || `Camera ${index + 1}`}
+        </option>
+      ))}
+    </select>
+  </div>
+)}
             <div className="grid gap-6 lg:grid-cols-[1fr_340px]">
               <div className="relative overflow-hidden rounded-[32px] border-4 border-white bg-neutral-950 shadow-2xl">
                 <div className="relative aspect-video min-h-96">
@@ -1312,7 +1383,7 @@ export default function Home() {
                     muted
                     playsInline
                     style={{ filter: selectedFilterOption.effect }}
-                    className="absolute inset-0 h-full w-full object-cover"
+                   className="absolute inset-0 h-full w-full object-cover"
                   />
 
                   {!cameraError && (
