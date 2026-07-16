@@ -635,7 +635,7 @@ export default function Home() {
 
         stream = await navigator.mediaDevices.getUserMedia({
           video: {
-            facingMode: { ideal: "environment" },
+            facingMode: "user",
             width: { ideal: 1280 },
             height: { ideal: 720 },
           },
@@ -704,6 +704,9 @@ export default function Home() {
       setCameraError("Unable to capture the photo. Please try again.");
       return;
     }
+
+    context.translate(canvas.width, 0);
+    context.scale(-1, 1);
     context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
     const photo = canvas.toDataURL("image/jpeg", 0.92);
@@ -1312,7 +1315,7 @@ export default function Home() {
                     muted
                     playsInline
                     style={{ filter: selectedFilterOption.effect }}
-                    className="absolute inset-0 h-full w-full object-cover"
+                    className="absolute inset-0 h-full w-full scale-x-[-1] object-cover"
                   />
 
                   {!cameraError && (
