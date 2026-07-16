@@ -145,7 +145,7 @@ function BrandHeader() {
     <header className="flex items-center justify-between gap-6">
       <div className="rounded-2xl border border-white/70 bg-white/75 px-4 py-3 shadow-sm backdrop-blur-md">
         <Image
-          src="/Logos/yellow-ribbon.png"
+          src="/logos/yellow-ribbon.png"
           alt="Yellow Ribbon Singapore"
           width={210}
           height={100}
@@ -156,7 +156,7 @@ function BrandHeader() {
 
       <div className="rounded-2xl border border-white/70 bg-white/75 px-4 py-3 shadow-sm backdrop-blur-md">
         <Image
-          src="/Logos/np.png"
+          src="/logos/np.png"
           alt="Ngee Ann Polytechnic"
           width={180}
           height={80}
@@ -240,7 +240,7 @@ function CapturedPhotosPreview({
         <div className="mb-4 flex items-center justify-between gap-3">
           <div className="rounded-xl bg-white px-3 py-2 shadow-sm">
             <Image
-              src="/Logos/yellow-ribbon.png"
+              src="/logos/yellow-ribbon.png"
               alt="Yellow Ribbon Singapore"
               width={70}
               height={28}
@@ -257,7 +257,7 @@ function CapturedPhotosPreview({
 
           <div className="rounded-xl bg-white px-3 py-2 shadow-sm">
             <Image
-              src="/Logos/np.png"
+              src="/logos/np.png"
               alt="Ngee Ann Polytechnic"
               width={64}
               height={28}
@@ -306,7 +306,7 @@ function CapturedPhotosPreview({
           <div className="flex gap-2">
             <div className="rounded-xl bg-white px-3 py-2 shadow-sm">
               <Image
-                src="/Logos/yellow-ribbon.png"
+                src="/logos/yellow-ribbon.png"
                 alt="Yellow Ribbon Singapore"
                 width={72}
                 height={28}
@@ -315,7 +315,7 @@ function CapturedPhotosPreview({
             </div>
             <div className="rounded-xl bg-white px-3 py-2 shadow-sm">
               <Image
-                src="/Logos/np.png"
+                src="/logos/np.png"
                 alt="Ngee Ann Polytechnic"
                 width={68}
                 height={28}
@@ -364,7 +364,7 @@ function CapturedPhotosPreview({
           <div className="flex gap-2">
             <div className="rounded-xl bg-white px-3 py-2 shadow-sm">
               <Image
-                src="/Logos/yellow-ribbon.png"
+                src="/logos/yellow-ribbon.png"
                 alt="Yellow Ribbon Singapore"
                 width={72}
                 height={28}
@@ -373,7 +373,7 @@ function CapturedPhotosPreview({
             </div>
             <div className="rounded-xl bg-white px-3 py-2 shadow-sm">
               <Image
-                src="/Logos/np.png"
+                src="/logos/np.png"
                 alt="Ngee Ann Polytechnic"
                 width={68}
                 height={28}
@@ -421,7 +421,7 @@ function CapturedPhotosPreview({
         <div className="flex gap-2">
           <div className="rounded-xl bg-white px-3 py-2 shadow-sm">
             <Image
-              src="/Logos/yellow-ribbon.png"
+              src="/logos/yellow-ribbon.png"
               alt="Yellow Ribbon Singapore"
               width={72}
               height={28}
@@ -430,7 +430,7 @@ function CapturedPhotosPreview({
           </div>
           <div className="rounded-xl bg-white px-3 py-2 shadow-sm">
             <Image
-              src="/Logos/np.png"
+              src="/logos/np.png"
               alt="Ngee Ann Polytechnic"
               width={68}
               height={28}
@@ -782,8 +782,8 @@ export default function Home() {
       );
 
       const [yellowRibbonLogo, npLogo] = await Promise.all([
-        loadCanvasImage("/Logos/yellow-ribbon.png"),
-        loadCanvasImage("/Logos/np.png"),
+        loadCanvasImage("/logos/yellow-ribbon.png"),
+        loadCanvasImage("/logos/np.png"),
       ]);
 
       const safeMessage =
